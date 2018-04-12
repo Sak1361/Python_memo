@@ -1,0 +1,1 @@
+curl -X POST -u 06022338-f4c3-4da0-92b7-ad01c14a91a8:c4UYtSImkrS4 --header "Content-Type: audio/flac" --data-binary @/home/fuchigami/Downloads/testvoice.flac "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize"
