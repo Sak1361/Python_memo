@@ -1,0 +1,5 @@
+成功↓
+curl -X POST -u 53f2651e-a0f3-4f56-b80b-48be1a01ea3c:fwrQj8UqHIZi --header "Content-Type: audio/flac" --data-binary @/home/fuchigami/Downloads/voice.flac "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize?continuous=true&model=ja-JP_BroadbandModel"
+
+成功↓
+curl -X POST -u 53f2651e-a0f3-4f56-b80b-48be1a01ea3c:fwrQj8UqHIZi --header "Content-Type: audio/flac" --header "Transfer-Encoding: chunked" --data-binary @/home/fuchigami/Downloads/voice.flac "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize?continuous=true&model=ja-JP_BroadbandModel"
