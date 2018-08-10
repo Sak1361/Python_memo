@@ -1,53 +1,5 @@
 {
-   "results": [
-      {
-         "alternatives": [
-            {
-               "confidence": 0.385, 
-               "transcript": "われわれは "
-            }
-         ], 
-         "final": true
-      }, 
-      {
-         "alternatives": [
-            {
-               "confidence": 0.821, 
-               "transcript": "そう 研究室 情報 科学 研究会 です "
-            }
-         ], 
-         "final": true
-      }, 
-      {
-         "alternatives": [
-            {
-               "confidence": 0.932, 
-               "transcript": "お書き に なった 電話 番号 は 現在 使われて おりません "
-            }
-         ], 
-         "final": true
-      }, 
-      {
-         "alternatives": [
-            {
-               "confidence": 0.245, 
-               "transcript": "番号 確かめた 上 "
-            }
-         ], 
-         "final": true
-      }, 
-      {
-         "alternatives": [
-            {
-               "confidence": 0.666, 
-               "transcript": "おかけ 直し ください "
-            }
-         ], 
-         "final": true
-      }
-   ], 
-   "result_index": 0, 
-   "warnings": [
-      "Unknown arguments: continuous."
-   ]
+   "code_description": "Bad Request", 
+   "code": 400, 
+   "error": "Stream was 0 bytes but needs to be at least 100 bytes."
 }
