@@ -11,7 +11,7 @@ def header():
     encord = f.info().get_content_charset(failobj="utf-8")#headerからエンコーディングを見つけるメソッド
     print('headerから取ってきたencording:', encord, file=sys.stderr)  #標準エラー出力として標準出力とは別に出力
     text = f.read().decode(encord)
-    #print(text)
+    print(text)
 
 def meta():
     bytes_content = f.read()  #とりまバイト型で変数に格納する
@@ -28,11 +28,15 @@ def meta():
     
     print('meta情報から取ってきたencording:', encord, file=sys.stderr)
     text = bytes_content.decode(encord) #複数回リードするのはダメ？
-    #print(text)
+    print(text)
 
 if __name__ == '__main__':
+    meta()
+    
+    '''
     a = input("headから取る？metaから取る？")
     if a == "meta":
         meta()
     else:
         header()
+    '''
