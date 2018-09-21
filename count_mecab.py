@@ -4,8 +4,8 @@ import collections #counterを使うため
 import codecs   #unicodeError対策
 
 def re_def(filepass):
-    #with codecs.open(filepass, 'r', encoding='utf-8', errors='ignore')as f:
-    with open(filepass, 'r')as f:
+    with codecs.open(filepass, 'r', encoding='utf-8', errors='ignore')as f:
+    #with open(filepass, 'r')as f:
         l = ""
         re_half = re.compile(r'[!-~]')  # 半角記号,数字,英字
         re_full = re.compile(r'[︰-＠]')  # 全角記号
@@ -16,7 +16,7 @@ def re_def(filepass):
         for line in f:
             line = re_half.sub("", line)
             line = re_full.sub("", line)
-            line = re_full2.sub("", line)
+            line = re_full2.sub(" ", line)
             line = re_other.sub("", line)
             line = re_space.sub("", line)
             line = re_n.sub("", line)
@@ -28,7 +28,6 @@ def owakati(all_words):
     global s, e, stops, tagger
     wakatifile = []
     while len(all_words):
-        print(e)
         w = all_words[s:e]
         wakatifile += ( tagger.parse(w).split("\n") )
         #wakatifile.extend(tagger.parse(w).split("\n"))
@@ -45,8 +44,8 @@ def count(filepass):
     all_words = re_def(filepass)  #無駄な記号とかを取り除く
     print("無駄排除終了")
     l = len(all_words)
-    print(l)
-    if l > 1000000:
+    print("総文字数:" + l)
+    if l > 2000000:
         while l / 1000:
             word_list = []
             wakati = owakati(all_words) #分かち書きアンド形態素解析
@@ -70,6 +69,7 @@ def count(filepass):
                 del wakati,addlist,word_list
                 break
             else:
+                print(e + "文字まで終了")
                 stops += 2000000
                 s = e
                 e += 200000
@@ -118,7 +118,7 @@ def plot(countedwords):
     plt.show()
 
 if __name__ == '__main__':
-    c = count("abe/abe_2017.txt")
+    c = count("/home/sak61/Downloads/file/wiki.txt")
     #with open("tmp_wakati2.txt", "w") as f:
     #    f.write(str(wakati))
     plot(c)
