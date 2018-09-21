@@ -4,8 +4,8 @@ import collections #counterを使うため
 import codecs   #unicodeError対策
 
 def re_def(filepass):
-    with codecs.open(filepass, 'r', encoding='utf-8', errors='ignore')as f:
-    #with open(filepass, 'r')as f:
+    #with codecs.open(filepass, 'r', encoding='utf-8', errors='ignore')as f:
+    with open(filepass, 'r')as f:
         l = ""
         re_half = re.compile(r'[!-~]')  # 半角記号,数字,英字
         re_full = re.compile(r'[︰-＠]')  # 全角記号
@@ -23,45 +23,40 @@ def re_def(filepass):
             l += line
     return l
 
-s = 0; e = 20000; stops = 200000
+s = 0; e = 200000; stops = 2000000; tagger = MeCab.Tagger()
 def owakati(all_words):
-    global s, e, stops
-    tagger = MeCab.Tagger()
-    w = ""
+    global s, e, stops, tagger
     wakatifile = []
-    while True:
-        w += all_words[s:e]
-        wakatifile.extend(tagger.parse(w).split("\n"))  #appendだとlistの中にlistを作るから
-        s = e
-        e += 20000
-        print(s)
-        if e > len(all_words):
+    while len(all_words):
+        print(e)
+        w = all_words[s:e]
+        wakatifile += ( tagger.parse(w).split("\n") )
+        #wakatifile.extend(tagger.parse(w).split("\n"))
+        if e > len(all_words) or e > stops:
             break
-        elif e > stops:
-            break
+        else:
+            s = e
+            e += 200000
     return wakatifile
 
 def count(filepass):
     global s, e, stops
-    word_list = []
     dicts = {}  # 単語をカウントする辞書
     all_words = re_def(filepass)  #無駄な記号とかを取り除く
     print("無駄排除終了")
     l = len(all_words)
-    if l > 200000:
-        for i in all_words:
+    print(l)
+    if l > 1000000:
+        while l / 1000:
             word_list = []
             wakati = owakati(all_words) #分かち書きアンド形態素解析
-            #tagger = MeCab.Tagger()
-            #wakati = tagger.parse(all_words).split("\n")
-            #with open("tmp_wakati2.txt", "w") as f:
-            #    f.write(str(wakati))
             for addlist in wakati:
                 addlist = re.split('[\t,]', addlist)  # 空白と","で分割
-                if addlist[0] == 'EOS' or addlist[0] == '' or addlist[0] == 't' or addlist[0] == 'ー':
+                if addlist[0] == 'EOS' or addlist[0] == '' or addlist[0] == 'ー':# or addlist[1] == '名詞' and addlist[2] == '固有名詞':  # 単語リストに追加
                     pass
-                elif addlist[1] == '名詞' and addlist[2] == '一般' or addlist[1] == '名詞' and addlist[2] == '固有名詞':  # 単語リストに追加
-                    word_list.extend(addlist)
+                elif addlist[1] == '名詞' and addlist[2] == '一般':
+                    #word_list.extend(addlist)
+                    word_list.append(addlist)
             for count in word_list:
                 if count[0] not in dicts:
                     dicts.setdefault(count[0], 1)
@@ -71,19 +66,37 @@ def count(filepass):
             for n, c in dicts.items():
                 if c < 100:
                     del n, c
-            if (l - stops) < 0:
-                del wakati,word_list
+            if l < stops:
+                del wakati,addlist,word_list
                 break
             else:
-                stops += 200000
-    return dicts
+                stops += 2000000
+                s = e
+                e += 200000
+        return dicts 
+    else:
+        word_list = []
+        wakati = owakati(all_words)
+        for addlist in wakati:
+            addlist = re.split('[\t,]', addlist)  # 空白と","で分割
+            if addlist[0] == 'EOS' or addlist[0] == '' or addlist[0] == 'ー':
+                pass
+            elif addlist[1] == '名詞' and addlist[2] == '一般' :#or addlist[1] == '名詞' and addlist[2] == '固有名詞':  # 単語リストに追加
+                #word_list.extend(addlist)
+                word_list.append(addlist)
+        for count in word_list:
+            if count[0] not in dicts:
+                dicts.setdefault(count[0], 1)
+            else:
+                dicts[count[0]] += 1
+        return dicts
 
 def plot(countedwords):
     #import numpy as np
     import matplotlib.pyplot as plt
     counts = {}
     c = 1
-    show = 30 #何件表示する？
+    show = 10 #何件表示する？
     for k, v in sorted(countedwords.items(), key=lambda x: x[1], reverse=True):  # 辞書を降順に入れる
         d = {str(k): int(v)}
         counts.update(d)
@@ -101,8 +114,11 @@ def plot(countedwords):
         plt.text(x, y, y, ha='center', va='bottom')
     plt.tick_params(width=2, length=10) #ラベル大きさ 
     plt.tight_layout()  #整える
+    #plt.tick_params(labelsize = 10)
     plt.show()
 
 if __name__ == '__main__':
-    c = count("abe/2018kokkai.txt")
+    c = count("abe/abe_2017.txt")
+    #with open("tmp_wakati2.txt", "w") as f:
+    #    f.write(str(wakati))
     plot(c)
