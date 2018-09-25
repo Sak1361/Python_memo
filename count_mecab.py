@@ -2,6 +2,7 @@ import MeCab
 import re
 import collections #counterを使うため
 import codecs   #unicodeError対策
+import time
 
 def re_def(filepass):
     with codecs.open(filepass, 'r', encoding='utf-8', errors='ignore')as f:
@@ -12,7 +13,8 @@ def re_def(filepass):
         re_full2 = re.compile(r'[、。・’〜：＜＞＿｜「」｛｝【】『』〈〉“”○〔〕…――――◇]')  # 全角で取り除けなかったやつ
         re_other = re.compile(r'https?://[\w/:%#\$&\?\(\)~\.=\+\-…]+')
         re_n = re.compile(r'\n')  # 改行文字
-        re_space = re.compile(r'[\s+]') #１以上の空白文字
+        re_space = re.compile(r'[\s+]')  #１以上の空白文字
+        start_time = time.time()
         for line in f:
             line = re_half.sub("", line)
             line = re_full.sub("", line)
@@ -20,7 +22,10 @@ def re_def(filepass):
             line = re_other.sub("", line)
             line = re_space.sub("", line)
             line = re_n.sub("", line)
+            #l = "".join((l,line))
             l += line
+    end_time = time.time() - start_time
+    print("無駄処理時間",end_time)
     return l
 
 s = 0; e = 200000; stops = 2000000; tagger = MeCab.Tagger()
@@ -44,7 +49,7 @@ def count(filepass):
     all_words = re_def(filepass)  #無駄な記号とかを取り除く
     print("無駄排除終了")
     l = len(all_words)
-    print("総文字数:" + l)
+    print("総文字数:" , l)
     if l > 2000000:
         while l / 1000:
             word_list = []
@@ -118,7 +123,7 @@ def plot(countedwords):
     plt.show()
 
 if __name__ == '__main__':
-    c = count("/home/sak61/Downloads/file/wiki.txt")
+    c = count("abe/abe_2016.txt")
     #with open("tmp_wakati2.txt", "w") as f:
     #    f.write(str(wakati))
     plot(c)
