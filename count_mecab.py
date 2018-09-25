@@ -11,7 +11,7 @@ def re_def(filepass):
         re_half = re.compile(r'[!-~]')  # 半角記号,数字,英字
         re_full = re.compile(r'[︰-＠]')  # 全角記号
         re_full2 = re.compile(r'[、。・’〜：＜＞＿｜「」｛｝【】『』〈〉“”○〔〕…――――◇]')  # 全角で取り除けなかったやつ
-        re_other = re.compile(r'https?://[\w/:%#\$&\?\(\)~\.=\+\-…]+')
+        re_url = re.compile(r'https?://[\w/:%#\$&\?\(\)~\.=\+\-…]+')
         re_n = re.compile(r'\n')  # 改行文字
         re_space = re.compile(r'[\s+]')  #１以上の空白文字
         start_time = time.time()
@@ -19,10 +19,9 @@ def re_def(filepass):
             line = re_half.sub("", line)
             line = re_full.sub("", line)
             line = re_full2.sub(" ", line)
-            line = re_other.sub("", line)
+            line = re_url.sub("", line)
             line = re_space.sub("", line)
             line = re_n.sub("", line)
-            #l = "".join((l,line))
             l += line
     end_time = time.time() - start_time
     print("無駄処理時間",end_time)
@@ -42,7 +41,7 @@ def owakati(all_words):
             s = e
             e += 200000
     return wakatifile
-
+    
 def count(filepass):
     global s, e, stops
     dicts = {}  # 単語をカウントする辞書
@@ -56,9 +55,9 @@ def count(filepass):
             wakati = owakati(all_words) #分かち書きアンド形態素解析
             for addlist in wakati:
                 addlist = re.split('[\t,]', addlist)  # 空白と","で分割
-                if addlist[0] == 'EOS' or addlist[0] == '' or addlist[0] == 'ー':# or addlist[1] == '名詞' and addlist[2] == '固有名詞':  # 単語リストに追加
+                if addlist[0] == 'EOS' or addlist[0] == '' or addlist[0] == 'ー':
                     pass
-                elif addlist[1] == '名詞' and addlist[2] == '一般':
+                elif addlist[1] == '名詞' and addlist[2] == '一般' or addlist[1] == '名詞' and addlist[2] == '固有名詞' and addlist[2] == '一般':  # 単語リストに追加
                     #word_list.extend(addlist)
                     word_list.append(addlist)
             for count in word_list:
@@ -78,7 +77,7 @@ def count(filepass):
                 stops += 2000000
                 s = e
                 e += 200000
-        return dicts 
+        return dicts
     else:
         word_list = []
         wakati = owakati(all_words)
@@ -86,7 +85,7 @@ def count(filepass):
             addlist = re.split('[\t,]', addlist)  # 空白と","で分割
             if addlist[0] == 'EOS' or addlist[0] == '' or addlist[0] == 'ー':
                 pass
-            elif addlist[1] == '名詞' and addlist[2] == '一般' :#or addlist[1] == '名詞' and addlist[2] == '固有名詞':  # 単語リストに追加
+            elif addlist[1] == '名詞' and addlist[2] == '一般' or addlist[1] == '名詞' and addlist[2] == '固有名詞' and addlist[2] == '一般':  # 単語リストに追加
                 #word_list.extend(addlist)
                 word_list.append(addlist)
         for count in word_list:
@@ -101,10 +100,10 @@ def plot(countedwords):
     import matplotlib.pyplot as plt
     counts = {}
     c = 1
-    show = 10 #何件表示する？
+    show = 30 #何件表示する？
     for k, v in sorted(countedwords.items(), key=lambda x: x[1], reverse=True):  # 辞書を降順に入れる
-        d = {str(k): int(v)}
-        counts.update(d)
+        #d = {str(k): int(v)}
+        counts.update( {str(k):int(v)} )
         c += 1
         if c > show:
             with open("result_wakati.txt", "w") as f:
@@ -123,7 +122,7 @@ def plot(countedwords):
     plt.show()
 
 if __name__ == '__main__':
-    c = count("abe/abe_2016.txt")
+    c = count("abe/abe_04-now.txt")
     #with open("tmp_wakati2.txt", "w") as f:
     #    f.write(str(wakati))
     plot(c)
